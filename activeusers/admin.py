@@ -3,7 +3,7 @@ from activeusers.models import Visitor
 
 class VisitorAdmin(admin.ModelAdmin):
     model = Visitor
-    list_display = ('ip_address', 'user', 'url', 'last_update')
+    list_display = ('ip_address', 'user', 'url', 'time_on_site', 'last_seen', 'last_update')
     def queryset(self, request):
 
         qs = self.model._default_manager.active()

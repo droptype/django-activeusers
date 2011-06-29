@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.timesince import timesince
 from activeusers import utils
 from activeusers.utils import string_with_title
 
@@ -54,6 +55,15 @@ class Visitor(models.Model):
         else:
             return ugettext(u'unknown')
     time_on_site = property(_time_on_site)
+
+    def _last_seen(self):
+        """
+        Returns a "humanised" expression for time since the user was last seen,
+        e.g. "3 minutes ago".
+        """
+
+        return ugettext(u'%s ago') % timesince(self.last_update)
+    last_seen = property(_last_seen)
 
     class Meta:
         app_label = string_with_title('activeusers', 'Active users')
