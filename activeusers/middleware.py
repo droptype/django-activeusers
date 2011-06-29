@@ -116,9 +116,15 @@ class VisitorCleanUpMiddleware:
     """Clean up old visitor tracking records in the database"""
 
     def process_request(self, request):
-        timeout = utils.get_cleanup_timeout()
 
-        if str(timeout).isdigit():
-            log.debug('Cleaning up visitors older than %s hours' % timeout)
-            timeout = datetime.now() - timedelta(hours=int(timeout))
-            Visitor.objects.filter(last_update__lte=timeout).delete()
+        last_clean_time = cache.get('activeusers_last_cleanup')
+        now = datetime.now()
+        x_minutes_ago = now - timedelta(minutes=int(utils.get_timeout()) / 2)
+
+        if not last_clean_time or last_clean_time <= x_minutes_ago:
+            cache.set('activeusers_last_cleanup', now)
+
+            timeout = utils.get_cleanup_timeout()
+            if str(timeout).isdigit():
+                timeout = datetime.now() - timedelta(hours=int(timeout))
+                Visitor.objects.filter(last_update__lte=timeout).delete()
