@@ -102,4 +102,4 @@ ACTIVEUSERS_IGNORE_PREFIXES = [
 ]
 
 import logging
-logging.basicConfig(filename='activeusers.log', level=logging.DEBUG)
+logging.basicConfig(stream='activeusers', filename='activeusers.log', level=logging.DEBUG)
