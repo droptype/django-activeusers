@@ -38,14 +38,14 @@ def get_timeout():
     Gets any specified timeout from the settings file, or use 10 minutes by
     default
     """
-    return getattr(settings, 'TRACKING_TIMEOUT', 10)
+    return getattr(settings, 'ACTIVEUSERS_TIMEOUT', 10)
 
 def get_cleanup_timeout():
     """
     Gets any specified visitor clean-up timeout from the settings file, or
     use 24 hours by default
     """
-    return getattr(settings, 'TRACKING_CLEANUP_TIMEOUT', 24)
+    return getattr(settings, 'ACTIVEUSERS_CLEANUP_TIMEOUT', 24)
 
 def u_clean(s):
     """A strange attempt at cleaning up unicode"""

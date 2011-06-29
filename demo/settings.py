@@ -74,9 +74,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'tracking.middleware.VisitorTrackingMiddleware',
-    'tracking.middleware.VisitorCleanUpMiddleware',
-    'tracking.middleware.BannedIPMiddleware',
+    'activeusers.middleware.VisitorTrackingMiddleware',
+    'activeusers.middleware.VisitorCleanUpMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
@@ -93,18 +92,17 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
-    'tracking'
+    'activeusers'
 )
 
 GOOGLE_MAPS_KEY = 'ABQIAAAAaP6spDi8OofHsLmWK8bZEhQCULP4XOMyhPd8d_NrQQEO8sT8XBQD-q-healg6KF2Fcm1SDbZ8VG7sw'
 TRACKING_USE_GEOIP = True
 GEOIP_PATH = os.path.join(DIRNAME, 'GeoLiteCity.dat')
-TRACKING_TIMEOUT = 5 # in minutes
-TRACKING_CLEANUP_TIMEOUT = 5 # in hours
-NO_TRACKING_PREFIXES = [
+ACTIVEUSERS_TIMEOUT = 5 # in minutes
+ACTIVEUSERS_CLEANUP_TIMEOUT = 5 # in hours
+ACTIVEUSERS_IGNORE_PREFIXES = [
     '/media/',
-    '/admin/',
 ]
 
 import logging
-logging.basicConfig(filename='tracking.log', level=logging.DEBUG)
+logging.basicConfig(filename='activeusers.log', level=logging.DEBUG)

@@ -3,19 +3,19 @@
 
 from setuptools import setup, find_packages
 import sys, os
-import tracking
+import activeusers
 
 setup(
-    name='django-tracking',
-    version=tracking.get_version(),
-    description="Basic visitor tracking and blacklisting for Django",
+    name='django-activeusers',
+    version=activeusers.get_version(),
+    description="Just active-visitor activeusers for Django",
     long_description=open('README.rst', 'r').read(),
     keywords='django, tracking, visitors',
     author='Josh VanderLinden',
     author_email='codekoala at gmail dot com',
-    url='http://bitbucket.org/codekoala/django-tracking',
+    url='http://github.com/asavoy/django-activeusers',
     license='MIT',
-    package_dir={'tracking': 'tracking'},
+    package_dir={'activeusers': 'activeusers'},
     include_package_data=True,
     packages=find_packages(),
     classifiers=[

@@ -9,12 +9,12 @@ from django.template import RequestContext, Context, loader
 from django.utils.simplejson import JSONEncoder
 from django.utils.translation import ungettext
 from django.views.decorators.cache import never_cache
-from tracking.models import Visitor
-from tracking.utils import u_clean as uc
+from activeusers.models import Visitor
+from activeusers.utils import u_clean as uc
 
 DEFAULT_TRACKING_TEMPLATE = getattr(settings, 'DEFAULT_TRACKING_TEMPLATE',
                                     'tracking/visitor_map.html')
-log = logging.getLogger('tracking.views')
+log = logging.getLogger('activeusers.views')
 
 def update_active_users(request):
     """
@@ -32,7 +32,7 @@ def update_active_users(request):
         }
 
         # render the list of active users
-        t = loader.get_template('tracking/_active_users.html')
+        t = loader.get_template('activeusers/_active_users.html')
         c = Context(info)
         users = {'users': t.render(c)}
 

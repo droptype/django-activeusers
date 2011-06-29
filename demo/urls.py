@@ -5,7 +5,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^tracking/', include('tracking.urls')),
+    (r'^activeusers/', include('activeusers.urls')),
     (r'^admin/', include(admin.site.urls)),
 )
 

@@ -9,7 +9,7 @@ def get_version():
 # initialize the URL prefixes that we shouldn't track
 try:
     from django.conf import settings
-    prefixes = getattr(settings, 'NO_TRACKING_PREFIXES', [])
+    prefixes = getattr(settings, 'ACTIVEUSERS_IGNORE_PREFIXES', [])
 except ImportError:
     pass
 else:
@@ -23,11 +23,11 @@ else:
 
         try:
             # finally, don't track requests to the tracker update pages
-            prefixes.append(reverse('tracking-refresh-active-users'))
+            prefixes.append(reverse('activeusers-refresh-active-users'))
         except NoReverseMatch:
-            # django-tracking hasn't been included in the URLconf if we get here
+            # django-activeusers hasn't been included in the URLconf if we get here
             pass
 
         prefixes.append('!!initialized!!')
 
-        settings.NO_TRACKING_PREFIXES = prefixes
+        settings.ACTIVEUSERS_IGNORE_PREFIXES = prefixes
