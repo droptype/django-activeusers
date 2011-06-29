@@ -37,21 +37,6 @@ class VisitorTrackingMiddleware:
         ip_address = utils.get_ip(request)
         user_agent = request.META.get('HTTP_USER_AGENT', '')[:255]
 
-        # retrieve untracked user agents from cache
-        ua_key = '_tracking_untracked_uas'
-        untracked = cache.get(ua_key)
-        if untracked is None:
-            log.info('Updating untracked user agent cache')
-            untracked = UntrackedUserAgent.objects.all()
-            cache.set(ua_key, untracked, 3600)
-
-        # see if the user agent is not supposed to be tracked
-        for ua in untracked:
-            # if the keyword is found in the user agent, stop tracking
-            if unicode(user_agent, errors='ignore').find(ua.keyword) != -1:
-                log.debug('Not tracking UA "%s" because of keyword: %s' % (user_agent, ua.keyword))
-                return
-
         if hasattr(request, 'session'):
             # use the current session key if we can
             session_key = request.session.session_key
@@ -137,25 +122,3 @@ class VisitorCleanUpMiddleware:
             log.debug('Cleaning up visitors older than %s hours' % timeout)
             timeout = datetime.now() - timedelta(hours=int(timeout))
             Visitor.objects.filter(last_update__lte=timeout).delete()
-
-class BannedIPMiddleware:
-    """
-    Raises an Http404 error for any page request from a banned IP.  IP addresses
-    may be added to the list of banned IPs via the Django admin.
-
-    The banned users do not actually receive the 404 error--instead they get
-    an "Internal Server Error", effectively eliminating any access to the site.
-    """
-
-    def process_request(self, request):
-        key = '_tracking_banned_ips'
-        ips = cache.get(key)
-        if ips is None:
-            # compile a list of all banned IP addresses
-            log.info('Updating banned IPs cache')
-            ips = [b.ip_address for b in BannedIP.objects.all()]
-            cache.set(key, ips, 3600)
-
-        # check to see if the current user's IP address is in that list
-        if utils.get_ip(request) in ips:
-            raise Http404

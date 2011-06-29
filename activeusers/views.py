@@ -12,8 +12,6 @@ from django.views.decorators.cache import never_cache
 from activeusers.models import Visitor
 from activeusers.utils import u_clean as uc
 
-DEFAULT_TRACKING_TEMPLATE = getattr(settings, 'DEFAULT_TRACKING_TEMPLATE',
-                                    'tracking/visitor_map.html')
 log = logging.getLogger('activeusers.views')
 
 def update_active_users(request):
@@ -96,17 +94,3 @@ def friendly_time(last_update):
         ) % {'seconds': seconds })
 
     return friendly_time or 0
-
-def display_map(request, template_name=DEFAULT_TRACKING_TEMPLATE,
-        extends_template='base.html'):
-    """
-    Displays a map of recently active users.  Requires a Google Maps API key
-    and GeoIP in order to be most effective.
-    """
-
-    GOOGLE_MAPS_KEY = getattr(settings, 'GOOGLE_MAPS_KEY', None)
-
-    return render_to_response(template_name,
-                              {'GOOGLE_MAPS_KEY': GOOGLE_MAPS_KEY,
-                               'template': extends_template},
-                              context_instance=RequestContext(request))
