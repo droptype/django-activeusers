@@ -69,3 +69,19 @@ def u_clean(s):
 
     return uni.encode('ascii', 'xmlcharrefreplace')
 
+class string_with_title(str):
+    """
+    Hack to achieve custom app labels in Django's admin.
+    See http://ionelmc.wordpress.com/2011/06/24/custom-app-names-in-the-django-admin/
+    """
+
+    def __new__(cls, value, title):
+        instance = str.__new__(cls, value)
+        instance._title = title
+        return instance
+
+    def title(self):
+        return self._title
+
+    __copy__ = lambda self: self
+    __deepcopy__ = lambda self, memodict: self

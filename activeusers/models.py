@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ugettext, ugettext_lazy as _
 from activeusers import utils
+from activeusers.utils import string_with_title
 
 log = logging.getLogger('activeusers.models')
 
@@ -55,5 +56,9 @@ class Visitor(models.Model):
     time_on_site = property(_time_on_site)
 
     class Meta:
+        app_label = string_with_title('activeusers', 'Active users')
         ordering = ('-last_update',)
         unique_together = ('session_key', 'ip_address',)
+        verbose_name = 'active visitor'
+        verbose_name_plural = 'active visitors'
+
