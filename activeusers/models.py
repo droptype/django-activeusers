@@ -38,6 +38,17 @@ class Visitor(models.Model):
 
     objects = VisitorManager()
 
+    def save(self, *args, **kwargs):
+
+        # Truncate to avoid errors when the url is longer than the field max_length
+        try:
+            max_length = self._meta.get_field('url').max_length
+            self.url = self.url[:max_length]
+        except AttributeError:
+            pass
+
+        super(Visitor, self).save(*args, **kwargs) 
+
     def _time_on_site(self):
         """
         Attempts to determine the amount of time a visitor has spent on the
