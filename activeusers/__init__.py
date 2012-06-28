@@ -14,12 +14,13 @@ except ImportError:
 else:
     if '!!initialized!!' not in prefixes:
         from django.core.urlresolvers import reverse, NoReverseMatch
-        if settings.MEDIA_URL and settings.MEDIA_URL != '/':
-            prefixes.append(settings.MEDIA_URL)
 
-        if settings.ADMIN_MEDIA_PREFIX:
-            prefixes.append(settings.ADMIN_MEDIA_PREFIX)
-
+        keys = ('MEDIA_URL', 'STATIC_URL')
+        for key in keys:
+            if hasattr(settings, key) and getattr(settings, key) != '/':
+                prefixes.append(getattr(settings, key))
+        
         prefixes.append('!!initialized!!')
 
         settings.ACTIVEUSERS_IGNORE_PREFIXES = prefixes
+
