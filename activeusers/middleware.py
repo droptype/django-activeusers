@@ -40,6 +40,12 @@ class VisitorTrackingMiddleware:
         if hasattr(request, 'session'):
             # use the current session key if we can
             session_key = request.session.session_key
+            if session_key is None:
+                # The session must not be stored yet.
+                # We will wait until we have a session_key on the next
+                # request. This has a nice side-effect of not attempting
+                # to track hit-and-runners like spiders and bots.
+                return
         else:
             # otherwise just fake a session key
             session_key = '%s:%s' % (ip_address, user_agent)
