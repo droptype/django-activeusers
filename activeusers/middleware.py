@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 import logging
 import random
 import re
@@ -6,6 +6,7 @@ import time
 import traceback
 import urllib, urllib2
 
+from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache
@@ -60,7 +61,7 @@ class VisitorTrackingMiddleware:
 
         # if we get here, the URL needs to be tracked
         # determine what time it is
-        now = datetime.now()
+        now = timezone.now()
 
         attrs = {
             'session_key': session_key,
@@ -124,7 +125,7 @@ class VisitorCleanUpMiddleware:
     def process_request(self, request):
 
         last_clean_time = cache.get('activeusers_last_cleanup')
-        now = datetime.now()
+        now = timezone.now()
         x_minutes_ago = now - timedelta(minutes=int(utils.get_timeout()) / 2)
 
         if not last_clean_time or last_clean_time <= x_minutes_ago:
@@ -132,5 +133,5 @@ class VisitorCleanUpMiddleware:
 
             timeout = utils.get_cleanup_timeout()
             if str(timeout).isdigit():
-                timeout = datetime.now() - timedelta(hours=int(timeout))
+                timeout = timezone.now() - timedelta(hours=int(timeout))
                 Visitor.objects.filter(last_update__lte=timeout).delete()
