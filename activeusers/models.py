@@ -1,10 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 import logging
-import traceback
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils import timezone
+from django.utils.translation import ugettext
 from django.utils.timesince import timesince
 from activeusers import utils
 from activeusers.utils import string_with_title
@@ -20,7 +19,7 @@ class VisitorManager(models.Manager):
         if not timeout:
             timeout = utils.get_timeout()
 
-        now = datetime.now()
+        now = timezone.now()
         cutoff = now - timedelta(minutes=timeout)
 
         return self.get_query_set().filter(last_update__gte=cutoff)

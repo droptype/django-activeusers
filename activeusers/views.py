@@ -1,8 +1,8 @@
-from datetime import datetime
 import logging
 import traceback
 from django.http import Http404, HttpResponse
 from django.template import Context, loader
+from django.utils import timezone
 from django.utils.simplejson import JSONEncoder
 from django.utils.translation import ungettext
 from django.views.decorators.cache import never_cache
@@ -47,7 +47,7 @@ def get_active_users(request):
     """
     if request.is_ajax():
         active = Visitor.objects.active().reverse()
-        now = datetime.now()
+        now = timezone.now()
 
         # we don't put the session key or IP address here for security reasons
         try:
