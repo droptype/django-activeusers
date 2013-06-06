@@ -1,22 +1,18 @@
 from datetime import timedelta
 import logging
-import random
 import re
-import time
-import traceback
-import urllib, urllib2
-
 from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache
 from django.db.utils import IntegrityError
-from django.http import Http404
 from activeusers import utils
 from activeusers.models import Visitor
 
+
 title_re = re.compile('<title>(.*?)</title>')
 log = logging.getLogger('activeusers.middleware')
+
 
 class VisitorTrackingMiddleware:
     """
@@ -32,7 +28,8 @@ class VisitorTrackingMiddleware:
 
     def process_request(self, request):
         # don't process AJAX requests
-        if request.is_ajax(): return
+        if request.is_ajax():
+            return
 
         # create some useful variables
         ip_address = utils.get_ip(request)
@@ -84,12 +81,13 @@ class VisitorTrackingMiddleware:
             if len(visitors):
                 visitor = visitors[0]
                 visitor.session_key = session_key
-                log.debug('Using existing visitor for IP %s / UA %s: %s' % (ip_address, user_agent, visitor.id))
+                log.debug('Using existing visitor for IP %s / UA %s: %s'
+                          % (ip_address, user_agent, visitor.id))
             else:
                 # it's probably safe to assume that the visitor is brand new
                 visitor = Visitor(**attrs)
                 log.debug('Created a new visitor: %s' % attrs)
-        except:
+        except StandardError:
             return
 
         # determine whether or not the user is logged in
@@ -105,7 +103,8 @@ class VisitorTrackingMiddleware:
         # at least an hour, update their referrer URL
         one_hour_ago = now - timedelta(hours=1)
         if not visitor.last_update or visitor.last_update <= one_hour_ago:
-            visitor.referrer = utils.u_clean(request.META.get('HTTP_REFERER', 'unknown')[:255])
+            referrer = request.META.get('HTTP_REFERER', 'unknown')
+            visitor.referrer = utils.u_clean(referrer[:255])
 
             # reset the number of pages they've been to
             visitor.page_views = 0
@@ -123,6 +122,7 @@ class VisitorTrackingMiddleware:
             # Try again with an UPDATE query.
             visitor.id = Visitor.objects.get(session_key=visitor.session_key).id
             visitor.save(force_update=True)
+
 
 class VisitorCleanUpMiddleware:
     """Clean up old visitor tracking records in the database"""

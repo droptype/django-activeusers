@@ -1,18 +1,17 @@
 from datetime import datetime
 import logging
 import traceback
-
-from django.conf import settings
 from django.http import Http404, HttpResponse
-from django.shortcuts import render_to_response
-from django.template import RequestContext, Context, loader
+from django.template import Context, loader
 from django.utils.simplejson import JSONEncoder
 from django.utils.translation import ungettext
 from django.views.decorators.cache import never_cache
 from activeusers.models import Visitor
 from activeusers.utils import u_clean as uc
 
+
 log = logging.getLogger('activeusers.views')
+
 
 def update_active_users(request):
     """
@@ -38,6 +37,7 @@ def update_active_users(request):
 
     # if the request was not made via AJAX, raise a 404
     raise Http404
+
 
 @never_cache
 def get_active_users(request):
