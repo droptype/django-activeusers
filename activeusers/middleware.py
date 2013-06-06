@@ -9,7 +9,7 @@ import urllib, urllib2
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache
-from django.db.utils import DatabaseError
+from django.db.utils import IntegrityError
 from django.http import Http404
 from activeusers import utils
 from activeusers.models import Visitor
@@ -115,8 +115,13 @@ class VisitorTrackingMiddleware:
         visitor.last_update = now
         try:
             visitor.save()
-        except DatabaseError:
-            log.error('There was a problem saving visitor information:\n%s\n\n%s' % (traceback.format_exc(), locals()))
+        except IntegrityError:
+            # If we received an IntegrityError on ``session_key`` not unique,
+            # it's probably because Django tried to do an INSERT, but another
+            # request from the same User was able to INSERT ahead of us.
+            # Try again with an UPDATE query.
+            visitor.id = Visitor.objects.get(session_key=visitor.session_key).id
+            visitor.save(force_update=True)
 
 class VisitorCleanUpMiddleware:
     """Clean up old visitor tracking records in the database"""
