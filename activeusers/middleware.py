@@ -65,9 +65,8 @@ class VisitorTrackingMiddleware:
             'ip_address': ip_address
         }
 
-        # for some reason, Visitor.objects.get_or_create was not working here
         try:
-            visitor = Visitor.objects.get(**attrs)
+            visitor = Visitor.objects.filter(**attrs).latest('pk')
         except Visitor.DoesNotExist:
             # see if there's a visitor with the same IP and user agent
             # within the last 5 minutes
@@ -87,8 +86,6 @@ class VisitorTrackingMiddleware:
                 # it's probably safe to assume that the visitor is brand new
                 visitor = Visitor(**attrs)
                 log.debug('Created a new visitor: %s' % attrs)
-        except StandardError:
-            return
 
         # determine whether or not the user is logged in
         user = request.user
