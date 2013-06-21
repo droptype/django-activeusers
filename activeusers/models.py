@@ -10,6 +10,7 @@ from activeusers.utils import string_with_title
 
 log = logging.getLogger('activeusers.models')
 
+
 class VisitorManager(models.Manager):
     def active(self, timeout=None):
         """
@@ -23,6 +24,7 @@ class VisitorManager(models.Manager):
         cutoff = now - timedelta(minutes=timeout)
 
         return self.get_query_set().filter(last_update__gte=cutoff)
+
 
 class Visitor(models.Model):
     session_key = models.CharField(max_length=40)
@@ -38,15 +40,15 @@ class Visitor(models.Model):
     objects = VisitorManager()
 
     def save(self, *args, **kwargs):
-
-        # Truncate to avoid errors when the url is longer than the field max_length
+        # Truncate to avoid errors when the url is longer than the field
+        # max_length
         try:
             max_length = self._meta.get_field('url').max_length
             self.url = self.url[:max_length]
         except AttributeError:
             pass
 
-        super(Visitor, self).save(*args, **kwargs) 
+        super(Visitor, self).save(*args, **kwargs)
 
     def _time_on_site(self):
         """
@@ -64,6 +66,7 @@ class Visitor(models.Model):
             return u'%i:%02i:%02i' % (hours, minutes, seconds)
         else:
             return ugettext(u'unknown')
+
     time_on_site = property(_time_on_site)
 
     def _last_seen(self):
@@ -73,6 +76,7 @@ class Visitor(models.Model):
         """
 
         return ugettext(u'%s ago') % timesince(self.last_update)
+
     last_seen = property(_last_seen)
 
     class Meta:
@@ -81,4 +85,3 @@ class Visitor(models.Model):
         unique_together = ('session_key', 'ip_address',)
         verbose_name = 'active visitor'
         verbose_name_plural = 'active visitors'
-
