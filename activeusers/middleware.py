@@ -120,8 +120,15 @@ class VisitorTrackingMiddleware:
             # it's probably because Django tried to do an INSERT, but another
             # request from the same User was able to INSERT ahead of us.
             # Try again with an UPDATE query.
-            visitor.id = Visitor.objects.get(session_key=visitor.session_key).id
-            visitor.save(force_update=True)
+            visitors = Visitor.objects.filter(session_key=visitor.session_key)
+            visitors.update(ip_address=visitor.ip_address,
+                            last_update=visitor.last_update,
+                            page_views=visitor.page_views,
+                            referrer=visitor.referrer,
+                            session_start=visitor.session_start,
+                            url=visitor.url,
+                            user=visitor.user,
+                            user_agent=visitor.user_agent)
 
 
 class VisitorCleanUpMiddleware:
