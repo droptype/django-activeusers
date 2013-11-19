@@ -1,10 +1,12 @@
 from datetime import timedelta
 import logging
-from django.contrib.auth.models import User
+
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext
 from django.utils.timesince import timesince
+
 from activeusers import utils
 from activeusers.utils import string_with_title
 
@@ -29,7 +31,7 @@ class VisitorManager(models.Manager):
 class Visitor(models.Model):
     session_key = models.CharField(max_length=40)
     ip_address = models.CharField(max_length=20)
-    user = models.ForeignKey(User, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
     user_agent = models.CharField(max_length=255)
     referrer = models.CharField(max_length=255)
     url = models.CharField(max_length=255)
