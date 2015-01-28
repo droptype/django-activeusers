@@ -1,6 +1,6 @@
 from datetime import timedelta
 import logging
-from django.contrib.auth.models import User
+from django.conf.settings import AUTH_USER_MODEL as User
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext
@@ -46,7 +46,7 @@ class Visitor(models.Model):
         except AttributeError:
             pass
 
-        super(Visitor, self).save(*args, **kwargs) 
+        super(Visitor, self).save(*args, **kwargs)
 
     def _time_on_site(self):
         """
@@ -81,4 +81,3 @@ class Visitor(models.Model):
         unique_together = ('session_key', 'ip_address',)
         verbose_name = 'active visitor'
         verbose_name_plural = 'active visitors'
-
