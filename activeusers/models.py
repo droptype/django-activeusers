@@ -1,6 +1,6 @@
 from datetime import timedelta
 import logging
-from django.conf.settings import AUTH_USER_MODEL as User
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext
@@ -27,7 +27,7 @@ class VisitorManager(models.Manager):
 class Visitor(models.Model):
     session_key = models.CharField(max_length=40)
     ip_address = models.CharField(max_length=20)
-    user = models.ForeignKey(User, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
     user_agent = models.CharField(max_length=255)
     referrer = models.CharField(max_length=255)
     url = models.CharField(max_length=255)
